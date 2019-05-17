@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.FeatureInfo;
 import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiInfo;
 import android.os.Build;
@@ -28,8 +29,12 @@ import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.telephony.TelephonyManager;
 import android.text.format.Formatter;
+import android.text.TextUtils;
 import android.app.ActivityManager;
 import android.util.DisplayMetrics;
+import android.hardware.Camera;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraAccessException;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -38,6 +43,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -221,6 +227,20 @@ public class RNDeviceModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void getCameraPresence(Promise p) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      CameraManager manager=(CameraManager)getReactApplicationContext().getSystemService(Context.CAMERA_SERVICE);
+      try {
+        p.resolve(manager.getCameraIdList().length > 0);
+      } catch (CameraAccessException e) {
+        p.reject(e);
+      }
+    } else {
+      p.resolve(Camera.getNumberOfCameras()> 0);
+    }
+  }
+
+  @ReactMethod
   public void getMacAddress(Promise p) {
     String macAddress = getWifiInfo().getMacAddress();
 
@@ -360,6 +380,37 @@ public class RNDeviceModule extends ReactContextBaseJavaModule {
     }
 
     p.resolve(promiseArray);
+  }
+
+  @ReactMethod
+  public void isLocationEnabled(Promise p) {
+      boolean locationEnabled = false;
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        LocationManager mLocationManager = (LocationManager) reactContext.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        locationEnabled = mLocationManager.isLocationEnabled();
+      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        int locationMode = Settings.Secure.getInt(reactContext.getContentResolver(), Settings.Secure.LOCATION_MODE, Settings.Secure.LOCATION_MODE_OFF);
+        locationEnabled = locationMode != Settings.Secure.LOCATION_MODE_OFF;
+      } else {
+        String locationProviders = Settings.Secure.getString(reactContext.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+        locationEnabled = !TextUtils.isEmpty(locationProviders);
+      }
+
+      p.resolve(locationEnabled);
+  }
+
+  @ReactMethod
+  public void getAvailableLocationProviders(Promise p) {
+    LocationManager mLocationManager = (LocationManager) reactContext.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+    final List<String> providers = mLocationManager.getProviders(false);
+
+    WritableMap providersAvailability = Arguments.createMap();
+    for (String provider : providers) {
+      providersAvailability.putBoolean(provider, mLocationManager.isProviderEnabled(provider));
+    }
+
+    p.resolve(providersAvailability);
   }
 
   public String getInstallReferrer() {

@@ -2,6 +2,12 @@
 
 ### Next
 
+### 1.8.0
+* feat: Add `isLocationEnabled()`, `getAvailableLocationProviders()` methods (https://github.com/react-native-community/react-native-device-info/pull/664)
+
+### 1.7.0
+ * feat: Add `getCameraPresence()` method (https://github.com/react-native-community/react-native-device-info/pull/474)
+
 ### 1.6.2
  * fix: added v to tag name in podspec (https://github.com/react-native-community/react-native-device-info/pull/660)
  * docs: Update README.md to have correct Podspec name (https://github.com/react-native-community/react-native-device-info/pull/656)

@@ -38,6 +38,7 @@ declare module.exports: {
   getSerialNumber: () => string,
   getAPILevel: () => number,
   getIPAddress: () => Promise<string>,
+  getCameraPresence: () => Promise<boolean>,
   getMACAddress: () => Promise<string>,
   getPhoneNumber: () => ?string,
   getCarrier: () => string,
@@ -56,4 +57,6 @@ declare module.exports: {
   supportedABIs: () => string[],
   hasSystemFeature: (feature: string) => Promise<boolean>,
   getSystemAvailableFeatures: () => Promise<Array<string>>,
+  isLocationEnabled: () => Promise<boolean>,
+  getAvailableLocationProviders: () => Promise<Object>,
 };
