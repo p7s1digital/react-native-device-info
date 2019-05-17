@@ -51,6 +51,7 @@ export default class App extends Component<Props> {
       deviceJSON.deviceLocale = DeviceInfo.getDeviceLocale();
       deviceJSON.preferredLocales = DeviceInfo.getPreferredLocales();
       deviceJSON.deviceCountry = DeviceInfo.getDeviceCountry();
+      deviceJSON.deviceNotch = DeviceInfo.hasDeviceNotch();
       deviceJSON.timezone = DeviceInfo.getTimezone();
       deviceJSON.instanceID = ios ? '' : DeviceInfo.getInstanceID();
       deviceJSON.installReferrer = ios ? '' : DeviceInfo.getInstallReferrer();

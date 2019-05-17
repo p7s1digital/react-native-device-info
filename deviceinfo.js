@@ -291,6 +291,9 @@ export default {
   getDeviceCountry: function() {
     return RNDeviceInfo.deviceCountry;
   },
+  hasDeviceNotch: function() {
+    return RNDeviceInfo.deviceNotch;
+  },
   getTimezone: function() {
     return RNDeviceInfo.timezone;
   },
@@ -310,7 +313,13 @@ export default {
     return RNDeviceInfo.isPinOrFingerprintSet;
   },
   hasNotch: function() {
-    return devicesWithNotch.findIndex(item => item.brand.toLowerCase() === RNDeviceInfo.brand.toLowerCase() && item.model.toLowerCase() === RNDeviceInfo.model.toLowerCase()) !== -1;
+    return (
+      devicesWithNotch.findIndex(
+        item =>
+          item.brand.toLowerCase() === RNDeviceInfo.brand.toLowerCase() &&
+          item.model.toLowerCase() === RNDeviceInfo.model.toLowerCase()
+      ) !== -1
+    );
   },
   getFirstInstallTime: function() {
     return RNDeviceInfo.firstInstallTime;
@@ -358,10 +367,10 @@ export default {
   getDeviceType: function() {
     return RNDeviceInfo.deviceType;
   },
-  isAutoDateAndTime: function () {
+  isAutoDateAndTime: function() {
     return RNDeviceInfo.isAutoDateAndTime();
   },
-  isAutoTimeZone: function () {
+  isAutoTimeZone: function() {
     return RNDeviceInfo.isAutoTimeZone();
   },
   supportedABIs: function() {
@@ -372,5 +381,5 @@ export default {
   },
   getSystemAvailableFeatures: function() {
     return RNDeviceInfo.getSystemAvailableFeatures();
-  }
+  },
 };

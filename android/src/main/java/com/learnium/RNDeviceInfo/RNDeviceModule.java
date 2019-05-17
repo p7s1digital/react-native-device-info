@@ -1,6 +1,8 @@
 package com.learnium.RNDeviceInfo;
 
 import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.UiModeManager;
 import android.bluetooth.BluetoothAdapter;
@@ -12,6 +14,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.FeatureInfo;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiInfo;
 import android.os.Build;
@@ -19,6 +22,8 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.os.BatteryManager;
 import android.provider.Settings;
+import android.view.DisplayCutout;
+import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.telephony.TelephonyManager;
@@ -119,6 +124,22 @@ public class RNDeviceModule extends ReactContextBaseJavaModule {
     }
 
     return current.getCountry();
+  }
+
+  @TargetApi(Build.VERSION_CODES.P)
+  private Boolean hasNotch() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+      final Activity activity = getCurrentActivity();
+      if (activity != null) {
+        Rect rectangle = new Rect();
+        Window window = activity.getWindow();
+        DisplayCutout displayCutout = activity.getWindow().getDecorView().getRootWindowInsets().getDisplayCutout();
+        window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+        int statusBarHeight = rectangle.top;
+        return displayCutout.getSafeInsetTop() > statusBarHeight;
+      }
+    }
+    return false;
   }
 
   private Boolean isEmulator() {
@@ -330,7 +351,7 @@ public class RNDeviceModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void getSystemAvailableFeatures(Promise p) {
     final FeatureInfo[] featureList = this.reactContext.getApplicationContext().getPackageManager().getSystemAvailableFeatures();
-    
+
     WritableArray promiseArray = Arguments.createArray();
     for (FeatureInfo f : featureList) {
       if (f.name != null) {
@@ -407,6 +428,7 @@ public class RNDeviceModule extends ReactContextBaseJavaModule {
     constants.put("deviceLocale", this.getCurrentLanguage());
     constants.put("preferredLocales", this.getPreferredLocales());
     constants.put("deviceCountry", this.getCurrentCountry());
+    constants.put("deviceNotch", this.hasNotch());
     constants.put("uniqueId", Settings.Secure.getString(this.reactContext.getContentResolver(), Settings.Secure.ANDROID_ID));
     constants.put("systemManufacturer", Build.MANUFACTURER);
     constants.put("bundleId", packageName);

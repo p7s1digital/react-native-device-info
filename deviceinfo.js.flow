@@ -21,6 +21,7 @@ declare module.exports: {
   getDeviceLocale: () => string,
   getPreferredLocales: () => Array<string>,
   getDeviceCountry: () => string,
+  hasDeviceNotch: () => boolean,
   getTimezone: () => string,
   getInstanceID: () => string,
   getInstallReferrer: () => string,

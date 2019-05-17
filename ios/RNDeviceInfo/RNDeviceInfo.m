@@ -249,10 +249,23 @@ RCT_EXPORT_MODULE();
     return [NSLocale preferredLanguages];
 }
 
-- (NSString*) deviceCountry 
+- (NSString*) deviceCountry
 {
   NSString *country = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
   return country;
+}
+
+- (BOOL) deviceNotch
+{
+    BOOL notch = NO;
+    if (@available(iOS 11.0, *)) {
+      UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+      if (keyWindow != nil) {
+        CGFloat bottom = [[UIApplication sharedApplication] keyWindow].safeAreaInsets.bottom;
+        notch = bottom > 0;
+      }
+    }
+    return notch;
 }
 
 - (NSString*) timezone

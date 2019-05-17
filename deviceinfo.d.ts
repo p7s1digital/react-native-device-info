@@ -22,6 +22,7 @@ declare const _default: {
   getDeviceLocale: () => string;
   getPreferredLocales: () => Array<string>;
   getDeviceCountry: () => string;
+  hasDeviceNotch: () => boolean;
   getTimezone: () => string;
   getInstanceID: () => string;
   getInstallReferrer: () => string | null;
